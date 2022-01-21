@@ -43,7 +43,7 @@ RUN apt-get update \
     && docker-php-ext-enable xdebug
 
 # Install pdo_informix with multibyte patch
-ARG PDO_FILE=PDO_INFORMIX-1.3.4
+ARG PDO_FILE=PDO_INFORMIX-1.3.5
 ARG PDO_URL=https://pecl.php.net/get/${PDO_FILE}.tgz
 #ARG PDO_PATCH_URL=https://git.php.net/?p=pecl/database/pdo_informix.git;a=patch;h=a88390f3b5df685da21c40f24b0fc70740e5b56f
 
@@ -63,7 +63,7 @@ ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/in
 # Copy required informix files
 COPY --from=builder /opt/ibm/informix /opt/ibm/informix
 
-# Extensions kopieren
+# Copy extensions
 COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
 COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
 

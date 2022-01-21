@@ -1,6 +1,6 @@
 # PHP-FPM-Informix Docker Image
 
-This image uses the official php:php-fpm image as base image.
+This image builds upon the official php:php-fpm image.
 
 ### PHP Modules
 ```
@@ -51,4 +51,9 @@ zlib
 ```
 Xdebug
 Zend OPcache
+```
+
+### Misc
+```
+Composer
 ```

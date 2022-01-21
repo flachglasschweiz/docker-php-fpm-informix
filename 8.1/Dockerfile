@@ -56,7 +56,7 @@ RUN curl -fsSL ${PDO_URL} -o ${PDO_FILE}.tgz \
     && docker-php-ext-install /tmp/${PDO_FILE}
 
 # Create final image
-FROM php:8.0-fpm
+FROM php:8.1-fpm
 ENV INFORMIXDIR=/opt/ibm/informix
 ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli:$LD_LIBRARY_PATH
 

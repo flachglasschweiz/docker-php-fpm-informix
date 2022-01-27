@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-image: [ 7.1,'8.0']
+        php-image: [ '8.0']
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -23,21 +23,4 @@ jobs:
         run: docker run -td --name ifx --network test-net -e LICENSE=accept -e STORAGE=local -p 9088:9088 fgch/informix-test:14.10.FC5IE
 
       - name: Run tests
-        run: docker run --rm --name php --network test-net -v "$PWD":/app -w /app fgch/php-fpm-informix:${{ matrix.php-image }} .github/workflows/tests.php
-
-  deploy:
-    needs: [test]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          push: true
-          tags: fgch/php-fpm-informix:latest
+        run: docker run --rm --name php --network test-net -v "$PWD":/app -w /app fgch/php-fpm-informix:${{ matrix.php-image }} php .github/workflows/tests.php

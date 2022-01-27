@@ -1,0 +1,26 @@
+name: test
+
+on:
+  [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-image: [7.1,'8.0',8.1]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Build image
+        run: docker build . --file ./${{ matrix.php-image}}/Dockerfile --tag=fgch/php-fpm-informix:${{ matrix.php-image }}
+
+      - name: Create test network
+        run: docker network create --driver bridge test-net
+
+      - name: Start Informix server
+        run: docker run -td --name ifx --network test-net -e LICENSE=accept -e STORAGE=local -p 9088:9088 fgch/informix-test:14.10.FC5IE
+
+      - name: Run tests
+        run: docker run --rm --name php --network test-net -v "$PWD":/app -w /app fgch/php-fpm-informix:${{ matrix.php-image }} php .github/workflows/tests.php

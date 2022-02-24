@@ -17,8 +17,10 @@ jobs:
         run: docker build . --file ./${{ matrix.php-image}}/Dockerfile --tag=fgch/php-fpm-informix:${{ matrix.php-image }}
 
       - name: Start Informix server
-        run: docker run -td --name ifx-test -h ifx -e LICENSE=accpet -e STORAGE=local \
-             -p 9088:9088 -p 9089:9089 -p 27017:27017 -p 27018:27018 -p 27883:27883 fgch/informix-test:14.10.FC5IE
+        run: docker run -td --name ifx-test -h ifx -e LICENSE=accpet -e STORAGE=local -p 9088:9088 -p 9089:9089 -p 27017:27017 -p 27018:27018 -p 27883:27883 fgch/informix-test:14.10.FC5IE
+
+      - name: Wait for the database
+        run: sleep 20
 
       - name: Run tests
         run: docker run --rm --entrypoint bash fgch/php-fpm-informix:${{ matrix.php-image }} php ./.github/workflows/tests.php

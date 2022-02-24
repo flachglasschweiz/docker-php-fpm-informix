@@ -12,7 +12,6 @@ COPY --from=ibmcom/informix-innovator-c:12.10.FC12W1IE /opt/ibm/informix/sdk_lic
 # Install packages and extensions
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        git \
         zip \
         unzip \
         gnupg2 \
@@ -43,15 +42,13 @@ RUN apt-get update \
     && docker-php-ext-enable xdebug
 
 # Install pdo_informix with multibyte patch
-ARG PDO_FILE=PDO_INFORMIX-1.3.5
+ARG PDO_FILE=PDO_INFORMIX-1.3.6
 ARG PDO_URL=https://pecl.php.net/get/${PDO_FILE}.tgz
-#ARG PDO_PATCH_URL=https://git.php.net/?p=pecl/database/pdo_informix.git;a=patch;h=a88390f3b5df685da21c40f24b0fc70740e5b56f
 
 RUN curl -fsSL ${PDO_URL} -o ${PDO_FILE}.tgz \
     && tar -xf ${PDO_FILE}.tgz -C /tmp/ \
     && rm ${PDO_FILE}.tgz \
     && cd /tmp/${PDO_FILE} \
-#    && curl $PDO_PATCH_URL | git apply -v \
     && docker-php-ext-configure /tmp/${PDO_FILE} --with-pdo-informix=${INFORMIXDIR} \
     && docker-php-ext-install /tmp/${PDO_FILE}
 

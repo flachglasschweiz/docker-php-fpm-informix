@@ -23,7 +23,7 @@ jobs:
         run: sleep 20
 
       - name: Run tests
-        run: docker run --rm --entrypoint bash fgch/php-fpm-informix:${{ matrix.php-image }} php ./.github/workflows/tests.php
+        run: docker run --rm -v ./.github/workflows/:/app fgch/php-fpm-informix:${{ matrix.php-image }} php '/app/tests.php'
 
   deploy:
     needs: [test]

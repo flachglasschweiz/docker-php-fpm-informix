@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-image: [ 7.1,'8.0',8.1 ]
+        php-image: [ 7.1]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -23,7 +23,7 @@ jobs:
         run: sleep 20
 
       - name: Run tests
-        run: docker run --rm -v ./.github/workflows/:/app fgch/php-fpm-informix:${{ matrix.php-image }} php '/app/tests.php'
+        run: docker run --rm -v .github/workflows/:/app fgch/php-fpm-informix:${{ matrix.php-image }} php '/app/tests.php'
 
   deploy:
     needs: [test]

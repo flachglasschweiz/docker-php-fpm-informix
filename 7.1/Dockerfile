@@ -74,6 +74,7 @@ RUN apt-get update \
         libjpeg62-turbo-dev \
         libfreetype6-dev \
         libzip-dev \
+        unzip \
     && apt-get clean \
     && rm -rf /var/cache/apt/lists \
     && rm -rf /var/tmp/* /tmp/*

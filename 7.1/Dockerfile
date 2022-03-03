@@ -27,9 +27,9 @@ ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/in
 # Copy required informix files
 COPY --from=builder /opt/ibm/informix /opt/ibm/informix
 
-# Copy extensions
+# Copy extension
 COPY --from=builder /usr/local/etc/php/conf.d/docker-php-ext-pdo_informix.ini /usr/local/etc/php/conf.d/docker-php-ext-pdo_informix.ini
-COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
+COPY --from=builder /usr/local/lib/php/extensions/no-debug-non-zts-*/pdo_informix.so /usr/local/lib/php/extensions/no-debug-non-zts-*/pdo_informix.so
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer

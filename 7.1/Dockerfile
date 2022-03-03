@@ -9,16 +9,39 @@ COPY --from=ibmcom/informix-innovator-c:12.10.FC12W1IE /opt/ibm/informix/incl /o
 COPY --from=ibmcom/informix-innovator-c:12.10.FC12W1IE /opt/ibm/informix/gls /opt/ibm/informix/gls
 COPY --from=ibmcom/informix-innovator-c:12.10.FC12W1IE /opt/ibm/informix/sdk_license /opt/ibm/informix/sdk_license
 
+# Install pdo_informix
+ARG PDO_FILE=PDO_INFORMIX-1.3.6
+ARG PDO_URL=https://pecl.php.net/get/${PDO_FILE}.tgz
+RUN curl -fsSL ${PDO_URL} -o ${PDO_FILE}.tgz \
+    && tar -xf ${PDO_FILE}.tgz -C /tmp/ \
+    && rm ${PDO_FILE}.tgz \
+    && cd /tmp/${PDO_FILE} \
+    && docker-php-ext-configure /tmp/${PDO_FILE} --with-pdo-informix=${INFORMIXDIR} \
+    && docker-php-ext-install /tmp/${PDO_FILE}
+
+# Create final image
+FROM php:7.1-fpm
+ENV INFORMIXDIR=/opt/ibm/informix
+ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli:$LD_LIBRARY_PATH
+
+# Copy required informix files
+COPY --from=builder /opt/ibm/informix /opt/ibm/informix
+
+# Copy extension
+COPY --from=builder /usr/local/etc/php/conf.d/docker-php-ext-pdo_informix.ini /usr/local/etc/php/conf.d/docker-php-ext-pdo_informix.ini
+COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
+
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
 # Install packages and extensions
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        git \
         zip \
         unzip \
         gnupg2 \
         apt-transport-https \
         libc6 \
-        g++ \
         libssl1.0 \
         libldap2-dev \
         libpng-dev \
@@ -40,43 +63,7 @@ RUN apt-get update \
         intl \
         opcache \
     && pecl install xdebug-2.9.8 \
-    && docker-php-ext-enable xdebug
-
-# Install pdo_informix with multibyte patch
-ARG PDO_FILE=PDO_INFORMIX-1.3.5
-ARG PDO_URL=https://pecl.php.net/get/${PDO_FILE}.tgz
-#ARG PDO_PATCH_URL=https://git.php.net/?p=pecl/database/pdo_informix.git;a=patch;h=a88390f3b5df685da21c40f24b0fc70740e5b56f
-
-RUN curl -fsSL ${PDO_URL} -o ${PDO_FILE}.tgz \
-    && tar -xf ${PDO_FILE}.tgz -C /tmp/ \
-    && rm ${PDO_FILE}.tgz \
-    && cd /tmp/${PDO_FILE} \
-#    && curl $PDO_PATCH_URL | git apply -v \
-    && docker-php-ext-configure /tmp/${PDO_FILE} --with-pdo-informix=${INFORMIXDIR} \
-    && docker-php-ext-install /tmp/${PDO_FILE}
-
-# Create final image
-FROM php:7.1-fpm
-ENV INFORMIXDIR=/opt/ibm/informix
-ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli:$LD_LIBRARY_PATH
-
-# Copy required informix files
-COPY --from=builder /opt/ibm/informix /opt/ibm/informix
-
-# Copy extensions
-COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
-COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
-
-# Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-# Install required libraries
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        libpng-dev \
-        libjpeg62-turbo-dev \
-        libfreetype6-dev \
-        libzip-dev \
+    && docker-php-ext-enable xdebug \
     && apt-get clean \
     && rm -rf /var/cache/apt/lists \
     && rm -rf /var/tmp/* /tmp/*

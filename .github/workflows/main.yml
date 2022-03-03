@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-image: [7.1,'8.0',8.1]
+        php-image: [7.1, "8.0", 8.1]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -16,11 +16,14 @@ jobs:
       - name: Build image
         run: docker build . --file ./${{ matrix.php-image}}/Dockerfile --tag=fgch/php-fpm-informix:${{ matrix.php-image }}
 
-      - name: Create test network
-        run: docker network create --driver bridge test-net
+      - name: Create Testnetwork
+        run: docker network create test-network
 
       - name: Start Informix server
-        run: docker run -td --name ifx --network test-net -e LICENSE=accept -e STORAGE=local -p 9088:9088 fgch/informix-test:14.10.FC5IE
+        run: docker run -td --name ifx-test -h ifx --network=test-network -e LICENSE=accept -e STORAGE=local -p 9088:9088 -p 9089:9089 -p 27017:27017 -p 27018:27018 -p 27883:27883 fgch/informix-test:14.10.FC5IE
+
+      - name: Wait for the database
+        run: sleep 20
 
       - name: Run tests
-        run: docker run --rm --name php --network test-net -v "$PWD":/app -w /app fgch/php-fpm-informix:${{ matrix.php-image }} php .github/workflows/tests.php
+        run: docker run --rm -v $(pwd)/.github/workflows/:/app --network=test-network fgch/php-fpm-informix:${{ matrix.php-image }} php /app/tests.php

@@ -31,9 +31,6 @@ COPY --from=builder /opt/ibm/informix /opt/ibm/informix
 COPY --from=builder /usr/local/etc/php/conf.d/docker-php-ext-pdo_informix.ini /usr/local/etc/php/conf.d/docker-php-ext-pdo_informix.ini
 COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
 
-# Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
 # Install packages and extensions
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \

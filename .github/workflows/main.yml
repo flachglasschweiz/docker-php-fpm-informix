@@ -28,3 +28,10 @@ jobs:
 
       - name: Run tests
         run: docker run --rm -v $(pwd)/.github/workflows/:/app --network=test-network fgch/php-fpm-informix:${{ matrix.php-image }} php /app/tests.php
+      
+      - name: Login to https://hub.docker.com
+        run: echo ${{ secrets.FGCHHUB_PW }} | docker login --username ${{ secrets.FGCHHUB_USER }} --password-stdin
+
+      - name: Push image to https://hub.docker.com
+        run: docker push fgch/php-fpm-informix:${{ matrix.php-image }}
+        

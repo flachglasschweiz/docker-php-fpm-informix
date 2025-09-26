@@ -1,4 +1,4 @@
-# Builder Image
+# Builder Image, fpm-debian base required!
 FROM php:7.1-fpm as builder
 ENV INFORMIXDIR=/opt/ibm/informix
 ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli:$LD_LIBRARY_PATH
@@ -23,7 +23,7 @@ RUN curl -fsSL ${PDO_URL} -o ${PDO_FILE}.tgz \
     && docker-php-ext-configure /tmp/${PDO_FILE} --with-pdo-informix=${INFORMIXDIR} \
     && docker-php-ext-install /tmp/${PDO_FILE}
 
-# Create final image
+# Create final image, fpm-debian base required!
 FROM php:7.1-fpm
 ENV INFORMIXDIR=/opt/ibm/informix
 ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli:$LD_LIBRARY_PATH

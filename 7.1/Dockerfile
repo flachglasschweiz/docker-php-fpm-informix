@@ -35,8 +35,7 @@ COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions
 ENV TZ=Europe/Zurich
 RUN apt-get update && apt-get install -y tzdata \
     && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
-    && echo $TZ > /etc/timezone \
-    && dpkg-reconfigure -f noninteractive tzdata
+    && echo $TZ > /etc/timezone
 
 # Install packages and extensions
 RUN apt-get update \

@@ -1,5 +1,5 @@
 # Builder Image
-FROM php:8.1-fpm as builder
+FROM php:8.1-fpm AS builder
 ENV INFORMIXDIR=/opt/ibm/informix
 ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli:$LD_LIBRARY_PATH
 

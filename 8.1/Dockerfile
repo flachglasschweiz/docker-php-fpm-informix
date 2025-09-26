@@ -1,7 +1,7 @@
 # Builder Image
-FROM php:8.1-fpm AS builder
-#ENV INFORMIXDIR=/opt/ibm/informix
-ENV INFORMIXDIR=/opt/IBM/Informix_Client-SDK
+#FROM php:8.1-fpm AS builder
+FROM php:8.1-fpm-bullseye AS builder
+ENV INFORMIXDIR=/opt/ibm/informix
 #ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli:$LD_LIBRARY_PATH 
 ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli
 #ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
@@ -25,9 +25,8 @@ RUN curl -fsSL ${PDO_URL} -o ${PDO_FILE}.tgz \
     && docker-php-ext-install /tmp/${PDO_FILE}
 
 # Create final image
-FROM php:8.1-fpm
-#ENV INFORMIXDIR=/opt/ibm/informix
-ENV INFORMIXDIR=/opt/IBM/Informix_Client-SDK
+FROM php:8.1-fpm-bullseye
+ENV INFORMIXDIR=/opt/ibm/informix
 #ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli:$LD_LIBRARY_PATH
 ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli
 #ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib

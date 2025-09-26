@@ -1,6 +1,10 @@
 # PHP-FPM-Informix Docker Image
 
-This image is based on the official php:php-fpm image.
+This image is based on the official php:php-fpm-debian image.
+
+Dieses image wird für das BDE verwendet, es dient als Basisimage.
+Dieses image wird auf https://hub.docker.com/repository/docker/fgch gehostet.
+BDE holt dieses image wenn ci/cd ausgeführt wird.
 
 ### PHP Modules
 ```

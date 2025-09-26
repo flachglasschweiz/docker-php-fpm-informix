@@ -2,8 +2,7 @@
 FROM php:8.1-fpm AS builder
 ENV INFORMIXDIR=/opt/ibm/informix
 #ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli:$LD_LIBRARY_PATH
-ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli
-
+ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli:${LD_LIBRARY_PATH:-}
 
 # Copy required Informix files
 COPY --from=ibmcom/informix-innovator-c:12.10.FC12W1IE /opt/ibm/informix/lib /opt/ibm/informix/lib
@@ -26,7 +25,7 @@ RUN curl -fsSL ${PDO_URL} -o ${PDO_FILE}.tgz \
 FROM php:8.1-fpm
 ENV INFORMIXDIR=/opt/ibm/informix
 #ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli:$LD_LIBRARY_PATH
-ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli
+ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli:${LD_LIBRARY_PATH:-}
 
 # Copy required informix files
 COPY --from=builder /opt/ibm/informix /opt/ibm/informix

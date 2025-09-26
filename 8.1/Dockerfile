@@ -10,7 +10,8 @@ COPY --from=ibmcom/informix-innovator-c:12.10.FC12W1IE /opt/ibm/informix/gls /op
 COPY --from=ibmcom/informix-innovator-c:12.10.FC12W1IE /opt/ibm/informix/sdk_license /opt/ibm/informix/sdk_license
 
 # Install pdo_informix with multibyte patch
-ARG PDO_FILE=PDO_INFORMIX-1.3.6
+# https://pecl.php.net/package/pdo_informix
+ARG PDO_FILE=PDO_INFORMIX-1.3.7
 ARG PDO_URL=https://pecl.php.net/get/${PDO_FILE}.tgz
 RUN curl -fsSL ${PDO_URL} -o ${PDO_FILE}.tgz \
     && tar -xf ${PDO_FILE}.tgz -C /tmp/ \

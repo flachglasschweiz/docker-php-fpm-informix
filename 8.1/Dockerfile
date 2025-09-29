@@ -13,12 +13,12 @@ COPY --from=ibmcom/informix-innovator-c:12.10.FC12W1IE /opt/ibm/informix/sdk_lic
 # https://pecl.php.net/package/pdo_informix
 ARG PDO_FILE=PDO_INFORMIX-1.3.7
 ARG PDO_URL=https://pecl.php.net/get/${PDO_FILE}.tgz
-RUN curl -fsSL ${PDO_URL} -o ${PDO_FILE}.tgz \
-    && tar -xf ${PDO_FILE}.tgz -C /tmp/ \
-    && rm ${PDO_FILE}.tgz \
-    && cd /tmp/${PDO_FILE} \
-    && docker-php-ext-configure /tmp/${PDO_FILE} --with-pdo-informix=${INFORMIXDIR} \
-    && docker-php-ext-install /tmp/${PDO_FILE}
+RUN curl -fsSL ${PDO_URL} -o ${PDO_FILE}.tgz
+RUN tar -xf ${PDO_FILE}.tgz -C /tmp/
+RUN rm ${PDO_FILE}.tgz
+RUN cd /tmp/${PDO_FILE}
+RUN docker-php-ext-configure /tmp/${PDO_FILE} --with-pdo-informix=${INFORMIXDIR}
+RUN docker-php-ext-install /tmp/${PDO_FILE}
 
 # Create final image, fpm-debian base required!
 FROM php:8.1-fpm-trixie

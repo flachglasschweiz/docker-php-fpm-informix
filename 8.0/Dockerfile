@@ -1,7 +1,6 @@
 # Builder Image, fpm-debian base required!
 FROM php:8.0-fpm-bullseye AS builder
 ENV INFORMIXDIR=/opt/ibm/informix
-#ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli:$LD_LIBRARY_PATH
 ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli
 
 # Copy required Informix files
@@ -11,6 +10,7 @@ COPY --from=ibmcom/informix-innovator-c:12.10.FC12W1IE /opt/ibm/informix/gls /op
 COPY --from=ibmcom/informix-innovator-c:12.10.FC12W1IE /opt/ibm/informix/sdk_license /opt/ibm/informix/sdk_license
 
 # Install pdo_informix with multibyte patch
+# https://pecl.php.net/package/pdo_informix
 ARG PDO_FILE=PDO_INFORMIX-1.3.7
 ARG PDO_URL=https://pecl.php.net/get/${PDO_FILE}.tgz
 RUN curl -fsSL ${PDO_URL} -o ${PDO_FILE}.tgz \
@@ -23,7 +23,6 @@ RUN curl -fsSL ${PDO_URL} -o ${PDO_FILE}.tgz \
 # Create final image, fpm-debian base required!
 FROM php:8.0-fpm-bullseye
 ENV INFORMIXDIR=/opt/ibm/informix
-#ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli:$LD_LIBRARY_PATH
 ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli
 
 # Copy required informix files

@@ -3,19 +3,13 @@ FROM php:7.1-fpm-buster AS builder
 ENV INFORMIXDIR=/opt/ibm/informix
 ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli
 
-# EOL, enable Archive
-#RUN sed -i 's|http://deb.debian.org|http://archive.debian.org|g' /etc/apt/sources.list \
-#    && sed -i '/security/d' /etc/apt/sources.list
+# buster ist EOL, nutze Archiv.debian.org
 RUN echo "deb http://archive.debian.org/debian buster main contrib non-free" > /etc/apt/sources.list
 RUN echo "deb http://archive.debian.org/debian-security buster/updates main contrib non-free" >> /etc/apt/sources.list
 RUN echo "deb http://archive.debian.org/debian buster-backports main contrib non-free" >> /etc/apt/sources.list
 RUN echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until
-#RUN echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99insecure
-RUN gpg --keyserver keyserver.ubuntu.com --recv-keys 0E98404D386FA1D9
-RUN gpg --export 0E98404D386FA1D9 | apt-key add -
-RUN gpg --keyserver keyserver.ubuntu.com --recv-keys 6ED0E7B82643E131
-RUN gpg --export 6ED0E7B82643E131 | apt-key add -
-    
+RUN echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99insecure
+
 # Copy required Informix files
 COPY --from=ibmcom/informix-innovator-c:12.10.FC12W1IE /opt/ibm/informix/lib /opt/ibm/informix/lib
 COPY --from=ibmcom/informix-innovator-c:12.10.FC12W1IE /opt/ibm/informix/incl /opt/ibm/informix/incl
@@ -38,17 +32,12 @@ FROM php:7.1-fpm-buster
 ENV INFORMIXDIR=/opt/ibm/informix
 ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli
 
+# buster ist EOL, nutze Archiv.debian.org
 RUN echo "deb http://archive.debian.org/debian buster main contrib non-free" > /etc/apt/sources.list
 RUN echo "deb http://archive.debian.org/debian-security buster/updates main contrib non-free" >> /etc/apt/sources.list
 RUN echo "deb http://archive.debian.org/debian buster-backports main contrib non-free" >> /etc/apt/sources.list
 RUN echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until
-#RUN echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99insecure
-RUN gpg --keyserver keyserver.ubuntu.com --recv-keys 0E98404D386FA1D9
-RUN gpg --export 0E98404D386FA1D9 | apt-key add -
-RUN gpg --keyserver keyserver.ubuntu.com --recv-keys 6ED0E7B82643E131
-RUN gpg --export 6ED0E7B82643E131 | apt-key add -
-
-
+RUN echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99insecure
 
 # Copy required informix files
 COPY --from=builder /opt/ibm/informix /opt/ibm/informix
@@ -58,14 +47,14 @@ COPY --from=builder /usr/local/etc/php/conf.d/docker-php-ext-pdo_informix.ini /u
 COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
 
 # Set Timezone
-#ENV TZ=Europe/Zurich
-#ENV DEBIAN_FRONTEND=noninteractive
-#RUN apt-get update \
-#    && apt-get install -y tzdata \
-#    && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
-#    && echo $TZ > /etc/timezone \
-#    && apt-get clean \
-#    && rm -rf /var/lib/apt/lists/*
+ENV TZ=Europe/Zurich
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update \
+    && apt-get install -y tzdata \
+    && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+    && echo $TZ > /etc/timezone \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install packages and extensions
 RUN apt-get update \

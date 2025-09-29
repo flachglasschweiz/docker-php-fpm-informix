@@ -10,7 +10,11 @@ RUN echo "deb http://archive.debian.org/debian buster main contrib non-free" > /
 RUN echo "deb http://archive.debian.org/debian-security buster/updates main contrib non-free" >> /etc/apt/sources.list
 RUN echo "deb http://archive.debian.org/debian buster-backports main contrib non-free" >> /etc/apt/sources.list
 RUN echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until
-RUN echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99insecure
+#RUN echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99insecure
+RUN gpg --keyserver keyserver.ubuntu.com --recv-keys 0E98404D386FA1D9
+RUN gpg --export 0E98404D386FA1D9 | apt-key add -
+RUN gpg --keyserver keyserver.ubuntu.com --recv-keys 6ED0E7B82643E131
+RUN gpg --export 6ED0E7B82643E131 | apt-key add -
     
 # Copy required Informix files
 COPY --from=ibmcom/informix-innovator-c:12.10.FC12W1IE /opt/ibm/informix/lib /opt/ibm/informix/lib
@@ -38,7 +42,12 @@ RUN echo "deb http://archive.debian.org/debian buster main contrib non-free" > /
 RUN echo "deb http://archive.debian.org/debian-security buster/updates main contrib non-free" >> /etc/apt/sources.list
 RUN echo "deb http://archive.debian.org/debian buster-backports main contrib non-free" >> /etc/apt/sources.list
 RUN echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until
-RUN echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99insecure
+#RUN echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99insecure
+RUN gpg --keyserver keyserver.ubuntu.com --recv-keys 0E98404D386FA1D9
+RUN gpg --export 0E98404D386FA1D9 | apt-key add -
+RUN gpg --keyserver keyserver.ubuntu.com --recv-keys 6ED0E7B82643E131
+RUN gpg --export 6ED0E7B82643E131 | apt-key add -
+
 
 
 # Copy required informix files

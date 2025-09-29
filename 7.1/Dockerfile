@@ -10,6 +10,7 @@ RUN echo "deb http://archive.debian.org/debian buster main contrib non-free" > /
 RUN echo "deb http://archive.debian.org/debian-security buster/updates main contrib non-free" >> /etc/apt/sources.list
 RUN echo "deb http://archive.debian.org/debian buster-backports main contrib non-free" >> /etc/apt/sources.list
 RUN echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until
+RUN echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99insecure
     
 # Copy required Informix files
 COPY --from=ibmcom/informix-innovator-c:12.10.FC12W1IE /opt/ibm/informix/lib /opt/ibm/informix/lib
@@ -37,6 +38,8 @@ RUN echo "deb http://archive.debian.org/debian buster main contrib non-free" > /
 RUN echo "deb http://archive.debian.org/debian-security buster/updates main contrib non-free" >> /etc/apt/sources.list
 RUN echo "deb http://archive.debian.org/debian buster-backports main contrib non-free" >> /etc/apt/sources.list
 RUN echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until
+RUN echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99insecure
+
 
 # Copy required informix files
 COPY --from=builder /opt/ibm/informix /opt/ibm/informix
@@ -46,14 +49,14 @@ COPY --from=builder /usr/local/etc/php/conf.d/docker-php-ext-pdo_informix.ini /u
 COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
 
 # Set Timezone
-ENV TZ=Europe/Zurich
-ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update \
-    && apt-get install -y tzdata \
-    && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
-    && echo $TZ > /etc/timezone \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+#ENV TZ=Europe/Zurich
+#ENV DEBIAN_FRONTEND=noninteractive
+#RUN apt-get update \
+#    && apt-get install -y tzdata \
+#    && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+#    && echo $TZ > /etc/timezone \
+#    && apt-get clean \
+#    && rm -rf /var/lib/apt/lists/*
 
 # Install packages and extensions
 RUN apt-get update \

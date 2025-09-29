@@ -1,5 +1,5 @@
 # Builder Image, fpm-debian base required!
-FROM php:8.0-fpm AS builder
+FROM php:8.0-fpm-bullseye AS builder
 ENV INFORMIXDIR=/opt/ibm/informix
 ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli:$LD_LIBRARY_PATH
 
@@ -10,7 +10,7 @@ COPY --from=ibmcom/informix-innovator-c:12.10.FC12W1IE /opt/ibm/informix/gls /op
 COPY --from=ibmcom/informix-innovator-c:12.10.FC12W1IE /opt/ibm/informix/sdk_license /opt/ibm/informix/sdk_license
 
 # Install pdo_informix with multibyte patch
-ARG PDO_FILE=PDO_INFORMIX-1.3.6
+ARG PDO_FILE=PDO_INFORMIX-1.3.7
 ARG PDO_URL=https://pecl.php.net/get/${PDO_FILE}.tgz
 RUN curl -fsSL ${PDO_URL} -o ${PDO_FILE}.tgz \
     && tar -xf ${PDO_FILE}.tgz -C /tmp/ \
@@ -20,7 +20,7 @@ RUN curl -fsSL ${PDO_URL} -o ${PDO_FILE}.tgz \
     && docker-php-ext-install /tmp/${PDO_FILE}
 
 # Create final image, fpm-debian base required!
-FROM php:8.0-fpm
+FROM php:8.0-fpm-bullseye
 ENV INFORMIXDIR=/opt/ibm/informix
 ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli:$LD_LIBRARY_PATH
 
@@ -30,6 +30,16 @@ COPY --from=builder /opt/ibm/informix /opt/ibm/informix
 # Copy extension
 COPY --from=builder /usr/local/etc/php/conf.d/docker-php-ext-pdo_informix.ini /usr/local/etc/php/conf.d/
 COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
+
+# Set Timezone
+ENV TZ=Europe/Zurich
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update \
+    && apt-get install -y tzdata \
+    && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+    && echo $TZ > /etc/timezone \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install packages and extensions
 RUN apt-get update \

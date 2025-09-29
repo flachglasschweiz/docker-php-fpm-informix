@@ -4,8 +4,8 @@ ENV INFORMIXDIR=/opt/ibm/informix
 ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli
 
 # EOL, enable Archive
-#RUN sed -i 's|http://deb.debian.org|http://archive.debian.org|g' /etc/apt/sources.list \
-#    && sed -i '/security/d' /etc/apt/sources.list
+RUN sed -i 's|http://deb.debian.org|http://archive.debian.org|g' /etc/apt/sources.list \
+    && sed -i '/security/d' /etc/apt/sources.list
     
 # Copy required Informix files
 COPY --from=ibmcom/informix-innovator-c:12.10.FC12W1IE /opt/ibm/informix/lib /opt/ibm/informix/lib

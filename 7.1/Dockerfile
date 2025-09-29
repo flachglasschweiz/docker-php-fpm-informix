@@ -33,6 +33,11 @@ FROM php:7.1-fpm-buster
 ENV INFORMIXDIR=/opt/ibm/informix
 ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli
 
+RUN echo "deb http://archive.debian.org/debian buster main contrib non-free" > /etc/apt/sources.list
+RUN echo "deb http://archive.debian.org/debian-security buster/updates main contrib non-free" >> /etc/apt/sources.list
+RUN echo "deb http://archive.debian.org/debian buster-backports main contrib non-free" >> /etc/apt/sources.list
+RUN echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until
+
 # Copy required informix files
 COPY --from=builder /opt/ibm/informix /opt/ibm/informix
 

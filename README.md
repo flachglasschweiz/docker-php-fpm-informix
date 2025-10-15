@@ -56,3 +56,14 @@ zlib
 Xdebug
 Zend OPcache
 ```
+
+### Compiling Error
+```
+/tmp/PDO_INFORMIX-1.3.6/informix_driver.c:91:37: error: passing argument
+2 of 'pdo_parse_params' from incompatible pointer type [-Wincompatible-pointer-types]
+   91 |         rc = pdo_parse_params(stmt, (char *) stmt_string,
+```
+
+Solution:
+Use bullseye or bookworm Debian as baseimage.  
+`FROM php:8.2-fpm-bullseye as builder`  

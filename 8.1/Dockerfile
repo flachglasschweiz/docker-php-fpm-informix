@@ -1,5 +1,5 @@
 # Builder Image, fpm-debian base required!
-FROM php:8.1-fpm-trixie AS builder
+FROM php:8.1-fpm-bullseye AS builder
 ENV INFORMIXDIR=/opt/ibm/informix
 ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli
 
@@ -21,7 +21,7 @@ RUN curl -fsSL ${PDO_URL} -o ${PDO_FILE}.tgz \
     && docker-php-ext-install /tmp/${PDO_FILE}
 
 # Create final image, fpm-debian base required!
-FROM php:8.1-fpm-trixie
+FROM php:8.1-fpm-bullseye
 ENV INFORMIXDIR=/opt/ibm/informix
 ENV LD_LIBRARY_PATH=/opt/ibm/informix/lib:/opt/ibm/informix/lib/esql:/opt/ibm/informix/lib/client:/opt/ibm/informix/lib/cli
 
@@ -31,6 +31,14 @@ COPY --from=builder /opt/ibm/informix /opt/ibm/informix
 # Copy extensions
 COPY --from=builder /usr/local/etc/php/conf.d/docker-php-ext-pdo_informix.ini /usr/local/etc/php/conf.d/
 COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
+
+# Add Archive Mirror
+RUN printf '%s\n' \
+      'deb http://archive.debian.org/debian bullseye main' \
+      'deb http://archive.debian.org/debian-security bullseye-security main' \
+      > /etc/apt/sources.list \
+     && printf 'Acquire::Check-Valid-Until "false";\n' \
+      > /etc/apt/apt.conf.d/99no-check-valid-until
 
 # Set Timezone
 ENV TZ=Europe/Zurich

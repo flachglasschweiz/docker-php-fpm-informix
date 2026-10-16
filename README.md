@@ -1,5 +1,5 @@
 # PHP-FPM-Informix Docker Image
-
+ 
 This image is based on the official php:php-fpm-debian image.
 
 Dieses image wird für das BDE verwendet, es dient als Basisimage.
